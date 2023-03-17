@@ -1,0 +1,86 @@
+@CHARSET "UTF-8";
+#page {
+	width: 960px;
+	margin: 0px auto;
+}
+
+#menu {
+	padding: 20px 0px;
+	border-bottom: 1px dotted gray;
+}
+
+#menu a {
+	font-size:20px;
+	text-decoration: none;
+	color: green;
+}
+
+#content {
+	text-align:center;
+}
+
+#footer {
+	text-align:center;
+	margin: 50px 0px;
+	border-top: 1px dotted gray;
+}
+
+.pagination {
+  display: inline-block;
+}
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+
+.pagination a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.pagination a:hover:not(.active) {
+	background-color: #ddd;
+}
+
+
+table {
+	border-collapse: collapse;
+	margin-top:10px;
+}
+
+td {
+	border-bottom: 1px solid black;
+	padding: 10px 0px;
+}
+.title {
+	background:gray;
+	color: white;
+	text-align: center;
+}
+
+.row:hover {
+	background:gray;
+	color: white;
+	cursor: pointer;
+}
+
+input, textarea, select {
+	font-family: "맑은 고딕";
+	font-size: 15px;
+}
+
+#condition{
+	width: 800px;
+}
+
+input[type=submit], input[type=reset], input[type=button], button{
+	background: blue;
+	color: white;
+	border-radius: 5px;
+	padding: 7px 30px;
+	margin-left:20px;
+	cursor: pointer;
+}

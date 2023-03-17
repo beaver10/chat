@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.team.cwl.chat.ChatDAO">
+
+	<!-- 채팅방을 나가지 않은 room 번호 존재 확인 -->
+	<select id="getRoomNumber" parameterType="ChatDTO" resultType="String">
+	  <![CDATA[
+	    SELECT ROOM FROM CHAT
+	    WHERE (RECVID = #{recvId} AND SENDID = #{sendId} AND EXITCOUNT != 1)
+	    OR (SENDID = #{recvId} AND RECVID = #{sendId} AND EXITCOUNT != 1)
+	    AND ROWNUM <= 1
+	    ]]>
+	</select>
+
+	<!-- room번호 최댓값 얻기 -->
+	<select id="getMaxRoom" resultType="Long">
+		SELECT COALESCE(MAX(ROOM), 0) FROM CHAT
+	</select>
+	
+	<!-- 메세지 보내기 -->
+	<insert id="setSendMessage" parameterType="ChatDTO">
+		INSERT INTO CHAT
+		VALUES(CHAT_SEQ.NEXTVAL, #{room}, #{sendId}, #{recvId}, SYSDATE, SYSDATE, #{content}, 0, 0, 0 )
+	</insert>
+	
+	<!-- 해당 room의 메세지 내역 가져오기 -->
+	<select id="getRoomContentList" parameterType="ChatDTO" resultType="ChatDTO">
+	    SELECT C.CHATNUM, C.ROOM, C.SENDID, C.RECVID, TO_CHAR(C.SENDTIME, 'YYYY-MM-DD HH24:MI') SENDTIME, C.READTIME, C.CONTENT, C.READCHECK, M.PROFILEEMOJINUM,
+	    C.EXITID, C.EXITCOUNT FROM CHAT C LEFT OUTER JOIN MEMBER M
+	    ON C.SENDID = M.MEMBERID WHERE ROOM=#{room}
+	</select>
+	
+	<!-- 대화중인 맴버 목록 리스트 가져오기 -->
+	<select id="getChatList" parameterType="ChatDTO" resultType="ChatDTO">
+		SELECT CHATNUM, ROOM, SENDID, RECVID, TO_CHAR(SENDTIME, 'YYYY-MM-DD HH24:MI') SENDTIME, READTIME, CONTENT, READCHECK, EXITID, EXITCOUNT
+		FROM CHAT
+		WHERE CHATNUM IN (SELECT MAX(CHATNUM) FROM CHAT GROUP BY ROOM) AND (SENDID = #{memberId} or RECVID = #{memberId}) 
+	    ORDER BY CHATNUM DESC;
+	</select>
+	
+	
+	<!-- 메세지 읽기 기능 -->
+	<!-- 안읽은 메세지 갯수 가져오기-->
+	<select id="getCountUnreadMessage" parameterType="ChatDTO" resultType="Long">
+		SELECT COUNT(CHATNUM) FROM CHAT
+		WHERE RECVID = #{memberId} and READCHECK = 0 AND ROOM = #{room}
+	</select>
+	<!-- 메세지 읽음 처리 -->
+	<update id="setChangeMessageReadCheck" parameterType="ChatDTO">
+		UPDATE CHAT SET READCHECK = 1 WHERE ROOM = #{room} AND READCHECK = 0 AND RECVID =#{memberId}
+		</update>
+	
+	<!-- 메세지 읽은 시간 처리-->
+	<update id="setChangeMessageReadTime" parameterType="ChatDTO">
+		UPDATE CHAT SET READTIME = SYSDATE WHERE ROOM = #{room} AND READCHECK = 0 AND RECVID = #{memberId}
+	</update>
+	
+	
+	<!-- 상대방 프로필 가져오기  -->
+	<select id="getOtherProfile" parameterType="ChatDTO" resultType="String">
+   		 SELECT PROFILEEMOJINUM FROM MEMBER
+	    <choose>
+	        <when test="sendId == memberId">
+            	WHERE MEMBERID = #{recvId}
+	        </when>
+	        <otherwise>
+           		 WHERE MEMBERID = #{sendId}
+	        </otherwise>
+	    </choose>
+	</select>
+	
+	
+	<!-- 채팅방나가기 기능 -->
+	<!-- 나가기 누른 회원이 있는지 확인  -->
+	<select id="getCountExitId" parameterType="String" resultType="Long">
+		<![CDATA[
+		select EXITCOUNT from CHAT where ROOM = #{room} and ROWNUM <= 1
+		]]>
+	</select>
+	<!-- 나간 회원아이디 얻기 -->
+	<select id="getExitId" parameterType="String" resultType="String">
+	<![CDATA[
+    	select EXITID from CHAT where ROOM = #{room} and ROWNUM <= 1
+		]]>
+	</select>
+	<!-- 나가기 누른 회원 등록 -->
+	<update id="setUpdateExitId" parameterType="String">
+  		  update CHAT set EXITID = #{exitId}, EXITCOUNT = 1 where ROOM = #{room}
+	</update>
+	<!-- 두회원이 모두 나갔을 경우 룸 삭제 -->
+	<delete id="setDeleteRoom" parameterType="String">
+  		  delete from CHAT where ROOM = #{room}
+	</delete>
+	
+</mapper>

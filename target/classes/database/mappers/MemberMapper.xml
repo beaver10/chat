@@ -1,11 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.team.cwl.chat.MemberDAO">
- 	<select id="getMemberLogin" resultType="MemberDTO" parameterType="MemberDTO">
- 		SELECT * FROM MEMBER
- 		WHERE MEMBERID = #{memberId}
- 	</select>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+<mapper namespace="com.team.cwl.member.MemberDAO">
+	
+	<select id="getAll" parameterType="MemberDTO" resultType="MemberDTO" >
+		SELECT * FROM MEMBER 
+		WHERE MEMBERID =#{memberId}
+	</select>
+
+
+
+	<insert id="setMemberAdd" parameterType="MemberDTO">
+		INSERT INTO MEMBER (MEMBERID, MEMBERPW, MEMBERNAME, MEMBERPHONE, MEMBEREMAIL, MEMBERGENDER, MEMBERSI, MEMBERAGE)
+		VALUES (#{memberId}, #{memberPw}, #{memberName}, #{memberPhone}, #{memberEmail}, #{memberGender}, #{memberSI}, #{memberAge})
+	</insert>
+	
+	<insert id="setMemberRoleAdd" parameterType="MemberDTO">
+  		INSERT INTO MEMBERROLE (MEMBERID, ROLENUM)
+  		VALUES (#{memberId}, (SELECT ROLENUM FROM ROLE WHERE ROLENAME='회원'))
+  	</insert>
+	
+	<select id="getMemberLogin" parameterType="MemberDTO" resultMap="getMemberLoginResult">
+		SELECT M.*, R.*
+		FROM MEMBER M
+			INNER JOIN
+			MEMBERROLE MR
+			ON (M.MEMBERID = MR.MEMBERID)
+			INNER JOIN
+			ROLE R
+			ON (MR.ROLENUM = R.ROLENUM)
+		WHERE M.MEMBERID = #{memberId}  	
+	</select>
+	
+	<resultMap type="MemberDTO" id="getMemberLoginResult">
+		<id column="MEMBERID" property="memberId"/>
+		<result column="MEMBERPW" property="memberPw"/>
+		<result column="MEMBERNAME" property="memberName"/>
+		<result column="MEMBERPHONE" property="memberPhone"/>
+		<result column="MEMBEREMAIL" property="memberEmail"/>
+		<result column="MEMBERGENDER" property="memberGender"/>
+		<result column="MEMBERSI" property="memberSI"/>
+		<result column="MEMBERAGE" property="memberAge"/>
+		<association property="roleDTO" javaType="RoleDTO">
+			<id column="ROLENUM" property="roleNum"/>
+			<result column="roleName" property="roleName"/>
+		</association>
+	</resultMap>
+	
+	<update id="setMemberUpdate" parameterType="MemberDTO">
+		UPDATE MEMBER SET MEMBERPW=#{memberPw}, MEMBERNAME=#{memberName}, MEMBERPHONE=#{memberPhone}, MEMBEREMAIL=#{memberEmail}, MEMBERGENDER=#{memberGender}, MEMBERSI=#{memberSI}, MEMBERAGE=#{memberAge}
+		WHERE MEMBERID=#{memberId}
+	</update>
 
 </mapper>
-

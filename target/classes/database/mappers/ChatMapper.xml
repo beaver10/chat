@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.team.cwl.chat.ChatDAO">
+<mapper namespace="com.team.cwl.chat.ChatDAOImpl">
 
 	<!-- 채팅방을 나가지 않은 room 번호 존재 확인 -->
 	<select id="getRoomNumber" parameterType="ChatDTO" resultType="String">

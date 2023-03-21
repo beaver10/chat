@@ -1,0 +1,57 @@
+.tbl {
+    width: 70%;
+    margin: 0px auto;
+    border: 1px solid black;
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+
+.tbl th, .tbl td {
+    border: 1px solid black;
+    height: 40px;
+}
+
+.tbl > thead > tr {
+    background-color: black;
+    color: white;
+}
+
+.tbl > tbody td > a {
+    text-decoration: none;
+    color: black;
+}
+
+.title {
+    width: 30%;
+    margin: 0 auto;
+}
+
+.image {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.tbl_td {
+    
+    text-align: center;
+}
+
+.tbl2 {
+    width: 70%;
+    margin: 0 auto;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+.tbl2 > thead > tr {
+    background-color: black;
+    color: white;
+}
+
+.tbl2 > tbody > tr > td {
+    border-bottom: 1px solid black;
+}
+
+.tbl2 th, .tbl2 td {
+    border: 3px solid white;
+}

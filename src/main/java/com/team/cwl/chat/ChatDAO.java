@@ -2,6 +2,9 @@ package com.team.cwl.chat;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public interface ChatDAO {
     List<ChatDTO> getChatList(String memberId);
     List<ChatDTO> getRoomContentList(ChatDTO chatDTO);
@@ -12,9 +15,9 @@ public interface ChatDAO {
     void setChangeMessageReadCheck(ChatDTO chatDTO);
     void setChangeMessageReadTime(ChatDTO chatDTO);
     String getOtherProfile(ChatDTO chatDTO);
-    int getCountExitId(String room);
-    void setUpdateExitId(String room, String exitId);
-    void setDeleteRoom(String room);
-    String getExitId(String room);
+    int getCountExitId(Long room);
+    void setUpdateExitId(Long room, String exitId);
+    void setDeleteRoom(Long room);
+    String getExitId(Long room);
 }
 

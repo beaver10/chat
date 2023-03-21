@@ -15,7 +15,7 @@ public class ChatDAOImpl implements ChatDAO {
     @Autowired
     private SqlSession sqlSession;
 
-	private final String NAMESPACE="com.team.cwl.chat.ChatDAO.";
+	private final String NAMESPACE="com.team.cwl.chat.ChatDAOImpl.";
 
     @Override
     public List<ChatDTO> getChatList(String memberId) {
@@ -63,25 +63,26 @@ public class ChatDAOImpl implements ChatDAO {
     }
 
     @Override
-    public int getCountExitId(String room) {
+    public int getCountExitId(Long room) {
         return sqlSession.selectOne(NAMESPACE + "countExitId", room);
     }
 
     @Override
-    public void setUpdateExitId(String room, String exitId) {
-        Map<String, String> map = new HashMap<>();
+    public void setUpdateExitId(Long room, String exitId) {
+        Map<String, Object> map = new HashMap<>();
         map.put("room", room);
         map.put("exitId", exitId);
         sqlSession.update(NAMESPACE + "updateExitId", map);
     }
+    
 
     @Override
-    public void setDeleteRoom(String room) {
+    public void setDeleteRoom(Long room) {
         sqlSession.delete(NAMESPACE + "setDeleteRoom", room);
     }
 
     @Override
-    public String getExitId(String room) {
+    public String getExitId(Long room) {
         return sqlSession.selectOne(NAMESPACE + "getExitId", room);
     }
 }

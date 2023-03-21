@@ -23,18 +23,15 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<context:component-scan base-package="com.team.cwl.chat" />
+	<context:component-scan base-package="com.team.cwl" />
 	
-	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+<!-- 	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
  		<beans:property name="maxUploadSize" value="10485760"/>
 	</beans:bean>
-	<beans:bean id="uploadPath" class="java.lang.String">
-	 	<beans:constructor-arg value="/Users/hayoungjang/Desktop/chat"/>
-	</beans:bean>
+	 -->
 	
-	<beans:bean id="echoHandler" class="com.team.cwl.chat.ChatHandler"/>
-	<websocket:handlers>
-		<websocket:mapping handler="echoHandler" path="/echo"/>
-		<websocket:sockjs/>
-	</websocket:handlers>
-</beans:beans>
+<!-- 	<beans:bean id="uploadPath" class="java.lang.String">
+	 	<beans:constructor-arg value="/Users/hayoungjang/Desktop/chat"/>
+	</beans:bean> -->
+	
+	</beans:beans>

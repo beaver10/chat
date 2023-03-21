@@ -3,12 +3,13 @@ package com.team.cwl.chat;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.team.cwl.member.MemberDTO;
 
 public class ChatDTO extends MemberDTO{
 	
 		private Long chatNum;
 		// 방번호
-		private String room;
+		private Long room;
 		// 발송자
 		private String sendId;
 		// 수신자
@@ -40,10 +41,10 @@ public class ChatDTO extends MemberDTO{
 			this.chatNum = chatNum;
 		}
 		
-		public String getRoom() {
+		public Long getRoom() {
 			return room;
 		}
-		public void setRoom(String room) {
+		public void setRoom(Long room) {
 			this.room = room;
 		}
 		public String getSendId() {

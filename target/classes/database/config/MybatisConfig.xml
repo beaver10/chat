@@ -7,7 +7,8 @@
 
     <typeAliases>
         <typeAlias type="com.team.cwl.chat.ChatDTO" alias="ChatDTO"/>
-        <typeAlias type="com.team.cwl.chat.MemberDTO" alias="MemberDTO"/>
+        <typeAlias type="com.team.cwl.member.MemberDTO" alias="MemberDTO"/>
+ 		<typeAlias type="com.team.cwl.member.RoleDTO" alias="RoleDTO"/>
     
     
       	<typeAlias type="java.lang.Long" alias="Long"/>

@@ -41,6 +41,7 @@ public class ChatService {
 	
 	public List<ChatDTO> getChatList(String memberId){
 		List<ChatDTO> list = chatDAOImpl.getChatList(memberId);
+		System.out.println("서비스 :"+list);
 		return list;
 	}
 	public int getCountUnreadMessage(ChatDTO chatDTO) {
@@ -60,19 +61,19 @@ public class ChatService {
 		return chatDAOImpl.getOtherProfile(chatDTO);
 	}
 	
-	public int getCountExitId(String room) {
+	public int getCountExitId(Long room) {
 		return chatDAOImpl.getCountExitId(room);
 	}
 	
-	public String getExitId(String room) {
+	public String getExitId(Long room) {
 		return chatDAOImpl.getExitId(room);
 	}
 	
-	public void setUpdateExitId(String room, String exitId) {
+	public void setUpdateExitId(Long room, String exitId) {
 		chatDAOImpl.setUpdateExitId(room, exitId);
 	}
 	
-	public void setDeleteRoom(String room) {
+	public void setDeleteRoom(Long room) {
 		chatDAOImpl.setDeleteRoom(room);
 	}
 }

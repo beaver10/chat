@@ -103,6 +103,8 @@ public class ChatController {
 		dto.setContent(content);
 		chatService.setSendMessage(dto);
 		return 1;
+		
+		
 	}
 	
 	@ResponseBody

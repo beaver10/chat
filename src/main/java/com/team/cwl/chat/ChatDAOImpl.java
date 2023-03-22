@@ -8,6 +8,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.team.cwl.member.MemberDTO;
+
 
 @Repository
 public class ChatDAOImpl implements ChatDAO {
@@ -29,7 +31,7 @@ public class ChatDAOImpl implements ChatDAO {
 
     @Override
     public void setSendMessage(ChatDTO chatDTO) {
-        sqlSession.insert(NAMESPACE + "sendMessage", chatDTO);
+        sqlSession.insert(NAMESPACE + "setSendMessage", chatDTO);
     }
 
     @Override
@@ -44,17 +46,17 @@ public class ChatDAOImpl implements ChatDAO {
 
     @Override
     public int getCountUnreadMessage(ChatDTO chatDTO) {
-        return sqlSession.selectOne(NAMESPACE + "countUnreadMessage", chatDTO);
+        return sqlSession.selectOne(NAMESPACE + "getCountUnreadMessage", chatDTO);
     }
 
     @Override
     public void setChangeMessageReadCheck(ChatDTO chatDTO) {
-        sqlSession.update(NAMESPACE + "changeMessageReadCheck", chatDTO);
+        sqlSession.update(NAMESPACE + "setChangeMessageReadCheck", chatDTO);
     }
 
     @Override
     public void setChangeMessageReadTime(ChatDTO chatDTO) {
-        sqlSession.update(NAMESPACE + "changeMessageReadTime", chatDTO);
+        sqlSession.update(NAMESPACE + "setChangeMessageReadTime", chatDTO);
     }
 
     @Override
@@ -64,15 +66,15 @@ public class ChatDAOImpl implements ChatDAO {
 
     @Override
     public int getCountExitId(Long room) {
-        return sqlSession.selectOne(NAMESPACE + "countExitId", room);
+        return sqlSession.selectOne(NAMESPACE + "getCountExitId", room);
     }
 
     @Override
     public void setUpdateExitId(Long room, String exitId) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("room", room);
         map.put("exitId", exitId);
-        sqlSession.update(NAMESPACE + "updateExitId", map);
+        sqlSession.update(NAMESPACE + "setUpdateExitId", map);
     }
     
 

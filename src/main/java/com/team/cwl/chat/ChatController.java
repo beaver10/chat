@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.team.cwl.member.MemberDTO;
 import com.team.cwl.member.MemberService;
@@ -26,33 +27,39 @@ public class ChatController {
 	@Autowired
 	MemberService memberService;
 	
-	@PostMapping("/chat/personalChat")
-	public String openPersonalChat(Model model, MemberDTO memberId) throws Exception {
-		
-		/* System.out.println(memberId); */
-		MemberDTO dto = memberService.getAll(memberId);
-		model.addAttribute("dto", dto);
-		return "/chat/chat/personalChat";
-	}
+//	@GetMapping("/chat/personalChat")
+//	public ModelAndView openPersonalChat(HttpSession session) throws Exception {
+//		ModelAndView mv = new ModelAndView();
+//		MemberDTO memberDTO = (MemberDTO) session.getAttribute("member");
+//		System.out.println(memberDTO.getMemberId()); 
+//		/* System.out.println(memberId); */
+//		MemberDTO dto = memberService.getAll(memberDTO.getMemberId());
+//		mv.addObject("dto", dto);
+//		mv.setViewName("/chat/personalChat");
+//		return mv;
+//	}
 	
 	
 	@GetMapping("/chat/list")
-	public String getChatList(Model model, HttpServletRequest request) {
-		System.out.println("여기까지옴");
-		System.out.println(request.getAttribute("memberId"));
-		List<ChatDTO> list = chatService.getChatList((String)request.getAttribute("memberId"));
+	public ModelAndView getChatList(HttpSession session) {
+		ModelAndView mv = new ModelAndView();
+		MemberDTO memberDTO = (MemberDTO) session.getAttribute("member");
+		System.out.println(memberDTO.getMemberId()); 
+		
+		List<ChatDTO> list = chatService.getChatList(memberDTO.getMemberId());
 		for(ChatDTO dto:list) {
-			dto.setMemberId((String)request.getAttribute("memberId"));
+			System.out.println(memberDTO.getMemberId());
+			dto.setMemberId(memberDTO.getMemberId());
 //			dto.setPhoto(chatService.getOtherProfile(dto));
 //			dto.setUnread(chatService.countUnreadMessage(dto));
 			/* System.out.println(dto.getPhoto()); */
 		}
 		
-		
-		model.addAttribute("list",list);
-		
 		System.out.println(list.size()+"리스트사이즈");
-		return "/chat/chat/message";
+		
+		mv.addObject("list",list);
+		mv.setViewName("/chat/message");
+		return mv;
 	}
 	
 
@@ -94,11 +101,12 @@ public class ChatController {
 	
 	@ResponseBody
 	@PostMapping("/chat/send")
-	public int sendMessage(String sendId, String recvId, String content, Long room) {
+	public int setSendMessage(String sendId, String recvId, String content, Long room, HttpSession session) {
+		MemberDTO memberDTO = (MemberDTO) session.getAttribute("member");
 		ChatDTO dto = new ChatDTO();
 		Long roomNumber = room;
 		dto.setRoom(roomNumber);
-		dto.setSendId(sendId);
+		dto.setSendId(memberDTO.getMemberId());
 		dto.setRecvId(recvId);
 		dto.setContent(content);
 		chatService.setSendMessage(dto);

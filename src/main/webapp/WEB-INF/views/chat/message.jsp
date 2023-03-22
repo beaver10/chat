@@ -2,12 +2,14 @@
 	pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script> -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="/css/message.css">
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.5/sockjs.min.js"></script>
+<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+ --><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="/resources/css/message.css">
 <div class="inner">
 	<div class="list-container">
 		<div class="title-container">
@@ -29,14 +31,14 @@
 								<input type="hidden" id="loginUser" value="${sessionScope.memberId}">
 								<input type="hidden" id="exitCount" value="${messageInfo.exitCount}"> 
 								<input type="hidden" id="room" value="${messageInfo.room}">
-								<c:choose>
+<%-- 								<c:choose>
 									<c:when test="${messageInfo.photo == null}">
 										<img class="profile-img" src="../profile_image/basic.jpg"alt="프로필이미지">
 									</c:when>
 									<c:otherwise>
 										<img class="profile-img" src="../profile_image/${messageInfo.photo}" alt="프로필이미지">
 									</c:otherwise>
-								</c:choose>
+								</c:choose> --%>
 								<c:choose>
 									<c:when test="${messageInfo.recvId == sessionScope.memberId}">
 										<input type="hidden" id="reciver" value="${messageInfo.sendId}">
@@ -94,7 +96,6 @@
 					<li class=" cursor manualReload"><span class="glyphicon glyphicon-wrench"></span> RELOAD수동</li>
 					<li class=" cursor stopReload"><span class="glyphicon glyphicon-stop"></span> RELOAD중지</li>
 					<li class=" cursor exit-btn"><span class="glyphicon glyphicon-log-out"></span> 채팅방나가기</li>
-					<!-- <li class = " cursor report-btn"><span class="glyphicon glyphicon-bullhorn"></span> 신고하기</li> -->
 				</ul>
 			</div>
 		</div>
@@ -114,22 +115,32 @@
 
 
 <script>
+		
+	console.log('socket')
+	let websocket = new SockJS("http://localhost/echo/");
+		
+		
+		
 	$(".option-list").hide()
 	$(".chat-container").hide()
 	$(".function-conatiner").hide()
-	//list
+	//option list
 	$(".list-btn").click(
 		function() {
 			$(this).parent().parent().siblings().children().children(
 					".option-list").hide();
 			$(this).next(".option-list").toggle();
 		})
+		
 	//chat
 	$(".option").click(function() {
 		$(".function-conatiner").toggle()
 	})
 
+	
+	//chatting list 
 	$(".open-chat").click(function() {
+		
 		$(".chat-container").show();
 		$(".list-container").hide();
 		$(".text").focus();
@@ -229,8 +240,8 @@
 				"room" : roomInfo
 			},
 			success : function() {
-				$(".text").val("");
-				$(".text").focus();
+				websocket.send($(".text").val(""));
+				websocket.send($(".text").focus());
 				getMessageList();
 			}
 		});
@@ -243,8 +254,12 @@
 			}
 		}
 	});
+	
+	
+	websocket.onmessage = getMessageList;
 
 	function getMessageList() {
+
 		$.ajax({
 			url : "../chat/chatList",
 			method : "post",

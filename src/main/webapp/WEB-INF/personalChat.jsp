@@ -5,12 +5,14 @@
 <html>
 <head>
 	<title>채팅방</title>
-<!-- <link href="https://fonts.googleapis.com/css2?family=Dokdo&family=Gaegu&family=Gugi&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Dokdo&family=Gaegu&family=Gugi&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.5/sockjs.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="/css/personalChat.css">
+<link rel="stylesheet" type="text/css" href="/resources/css/personalChat.css">
 </head>
 <body>
 <div class="inner">
@@ -22,8 +24,9 @@
                <div class="function-conatiner">
                    <ul>
                        <li><span class = "glyphicon glyphicon-cog"> 채팅기능</span></li>
-                       <li class = " cursor autoReload" ><span class = "glyphicon glyphicon-play"></span> RELOAD자동</li>
-
+                       <li class = " cursor autoReload"><span class = "glyphicon glyphicon-play"></span> RELOAD자동</li>
+                       <li class = " cursor manualReload"><span class = "glyphicon glyphicon-wrench"></span> RELOAD수동</li>
+                       <li class = " cursor stopReload"><span class = "glyphicon glyphicon-stop"></span> RELOAD중지</li>
                        <li class = " cursor exit-btn"><span class="glyphicon glyphicon-log-out"></span> 채팅방나가기</li>
                    </ul>
                </div>
@@ -41,15 +44,22 @@
      </div>
   </div>
 
+
+
   <script type="text/javascript">
-	$(".function-conatiner").hide()
+ 
+  $(".function-conatiner").hide()
 	$(".option").click(function () { 
 		    $(".function-conatiner").toggle()
 	})
+	console.log('socket')
+	let websocket = new WebSocket("ws://localhost/echo.do");
+	websocket.onmessage = getMessageList;
 
 	//생성된 룸정보 확인
 	checkRoomInfo();
 	function checkRoomInfo(){
+		websocket.onopen = checkRoomInfo;
 		let sender = $("#sender").val();
 		let reciver = $("#reciver").val();
 		$.ajax({
@@ -65,7 +75,7 @@
 		})
 	}	
 
-    //메세지 내역 가져오기
+  //메세지 내역 가져오기
 	function getMessageList() {
 		let sender = $("#sender").val();
 		let room = $("#room").val();
@@ -142,7 +152,7 @@
 		}
 	})
 
-    //메세지 전송
+  //메세지 전송
 	$(".send-btn").click(function() {
 		let sender = $("#sender").val();
 		let reciver = $("#reciver").val();
@@ -159,8 +169,8 @@
 			method: "post",
 			data: {"sendId":sender, "recvId":reciver, "content":content, "room":room},
 			success: function(){
-				$(".text").val("");
-				$(".text").focus();
+				websocket.send($(".text").val(""));
+				websocket.send($(".text").focus());
 				getMessageList();
 			}
 		})
@@ -169,16 +179,16 @@
 	//엔터로키로 메세지 전송
 	$(".text").keydown(function(key) {
 	//13번은 엔터키
-    if (key.keyCode == 13) {
-    	  //shift키를 누르지 않았을 경우
-    	  if (!key.shiftKey){
-    		  $('.send-btn').trigger('click');
-          }
-    	}
+  if (key.keyCode == 13) {
+  	  //shift키를 누르지 않았을 경우
+  	  if (!key.shiftKey){
+  		  $('.send-btn').trigger('click');
+        }
+  	}
 	});
 
 
-    //채팅방 나가기
+  //채팅방 나가기
 	$(".exit-btn").click(function() {
 		if($("#listSize").val() == 0){
 			alert("채팅 내역이 없습니다.")
@@ -194,15 +204,15 @@
 		  		data: {"exitId":exitId, "room":roomInfo},
 				success: function(){
 					location.href = "list";
-					window.close();
+					websocket.close();
 				}	
 			});
 	  		
 		}
-  	});
+	});
 
 
-    //채팅목록으로 이동하기
+  //채팅목록으로 이동하기
 	$(".list").click(function() {
 		if($("#listSize").val()>0){
 			location.href='../chat/list';
@@ -212,30 +222,45 @@
 		}
 	});
 
-    //단축키로 reload기능 실행
-  	$(window).keydown(function(key) {
-        if (key.keyCode == 65 && key.shiftKey) {
-        	$(".autoReload").trigger('click');
-        }else if (key.keyCode == 83 && key.shiftKey) {
-        	$(".stopReload").trigger('click');
+
+
+	//reload
+	$(window).keydown(function(key) {
+      if (key.keyCode == 65 && key.shiftKey) {
+      	$(".autoReload").trigger('click');
+      }else if (key.keyCode == 83 && key.shiftKey) {
+      	$(".stopReload").trigger('click');
 		}else if (key.keyCode == 90 && key.shiftKey){
-        	$(".manualReload").trigger('click');
+      	$(".manualReload").trigger('click');
 		} 
-    });
-
-
-    //reload버튼 관련 이벤트
+  });
+	
+	
+	//reload
+	$(".manualReload").click(function() {
+		getMessageList()
+	})
 	$(".autoReload").click(function() {
 		StartReload()
 	})
+	$(".stopReload").click(function() {
+		StopReload()
+	})
 
 	//실시간 채팅 실행
-   	function StartReload() {
-   		getMessageList();
-   		alert("auto reload start")
-   	   	reload = setInterval(getMessageList, 1000);
-   	}
-    
+ 	function StartReload() {
+ 		getMessageList();
+ 		alert("auto reload start")
+ 	   	reload = setInterval(getMessageList, 1000);
+ 	}
+	
+ 	function StopReload() {
+ 		clearInterval(reload);
+ 		alert("auto reload stop")
+ 	}
+
+	
+	
     
 </script>
 </body>

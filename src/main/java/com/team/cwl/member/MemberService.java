@@ -10,7 +10,7 @@ public class MemberService {
 	private MemberDAO memberDAO;
 	
 	
-	public MemberDTO getAll(MemberDTO memberId) throws Exception {
+	public MemberDTO getAll(String memberId) throws Exception {
 		return memberDAO.getAll(memberId);
 	}
 	

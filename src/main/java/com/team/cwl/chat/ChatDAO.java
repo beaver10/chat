@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.team.cwl.member.MemberDTO;
+
 @Repository
 public interface ChatDAO {
     List<ChatDTO> getChatList(String memberId);
